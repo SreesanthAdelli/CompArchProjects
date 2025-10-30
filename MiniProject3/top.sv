@@ -16,8 +16,9 @@ module top (
     logic [23:0] shift_reg;
 
     // --- 1 Hz tick ---
-    logic [23:0] div_counter;
-    logic tick;
+    logic [23:0] div_counter = 0;
+    logic tick = 0;
+
     always_ff @(posedge clk) begin
         if (div_counter == 24'd11_999_999) begin // 12 MHz / 1 Hz
             div_counter <= 0;
@@ -32,7 +33,7 @@ module top (
     logic [63:0] red_grid, green_grid, blue_grid;
 
     // --- 8x8 grid gliders (3 different starting points) ---
-    localparam [63:0] RED_INIT   = 64'b11100000_00000000_00001000_00000000_00000000_00000000_00000000_00000000; // glider 1
+    localparam [63:0] RED_INIT   = 64'b11100000_00000000_00000000_00000000_00000000_00000000_00000000_00000000; // glider 1
     localparam [63:0] GREEN_INIT = 64'b00000000_00011100_00000000_00000000_00000000_00000000_00000000_00000000; // glider 2
     localparam [63:0] BLUE_INIT  = 64'b00000000_00000000_00000111_00000000_00000000_00000000_00000000_00000000; // glider 3
 
@@ -42,7 +43,7 @@ module top (
     game_of_life #(.INIT_GRID(GREEN_INIT)) u_green_gol (.clk(clk), .tick(tick), .grid_out(green_grid));
     game_of_life #(.INIT_GRID(BLUE_INIT))  u_blue_gol  (.clk(clk), .tick(tick), .grid_out(blue_grid));
 
-    // --- Convert 1-bit grid to 8-bit channel for WS2812B ---
+    // --- Convert 1-bit grid to 8-bit channel for WS2812B. Changing 8 to smaller number reduces brightness (hurts my eyes!) ---
     always_comb begin
         red_data   = {8{red_grid[pixel]}};
         green_data = {8{green_grid[pixel]}};

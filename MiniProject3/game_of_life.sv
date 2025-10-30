@@ -16,6 +16,10 @@ module game_of_life #(
     logic [63:0] north, south, east, west;
     logic [63:0] ne, nw, se, sw;
 
+    // sum neighbors (count of live neighbors)
+    logic [3:0] neighbors [63:0];
+    integer i;
+
     always_comb begin
         // wrap-around shifts
         north = {grid[7:0], grid[63:8]};      // shift up
@@ -28,9 +32,6 @@ module game_of_life #(
         se = {south[0], south[63:1]};         // south-east
         sw = {south[63:1], south[0]};         // south-west
 
-        // sum neighbors (count of live neighbors)
-        logic [3:0] neighbors [63:0];
-        integer i;
         for (i = 0; i < 64; i = i + 1) begin
             neighbors[i] = north[i] + south[i] + east[i] + west[i] +
                            ne[i] + nw[i] + se[i] + sw[i];
